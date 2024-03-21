@@ -2,7 +2,7 @@
  * uartFrameParser.c
  *
  *  Created on: Mar 20, 2024
- *      Author: KEMERDEN
+ *      Author: hllokrates
  */
 #include "uartFrameParser.h"
 
@@ -11,6 +11,8 @@
 volatile uart_states_t uart_state;
 volatile uart_data_t uart_rx_data;
 volatile uint8_t counter=0;
+volatile uint8_t failCounter=0;
+
 volatile uint8_t cs=0;
 volatile bool fh1=0;
 uint8_t h1=0x55;
@@ -19,7 +21,7 @@ uint8_t h2=0xAA;
 void resetUartRxBuffer()
 {
 	fh1=0;
-	memset(&uart_rx_data, 0, sizeof(uart_data_t));
+	memset(&uart_rx_data, '\0', sizeof(uart_data_t));
 	uart_state=0;
 	counter=0;
 }
@@ -97,7 +99,8 @@ bool parserRx(const void* data)
     case uart_chksum: // 39 - 40 gelend ata chksum'a 4039 şeklinde atanıyor.
         if(checkHeadersComeOnProccess(d)){return 0;break;}
         uint8_t temp =d;
-        uart_rx_data.chksum |= temp << (uint8_t)(8*counter++);
+        uart_rx_data.chksum |= temp << (uint8_t)(8*counter++); // önce low byte sonra high byte gelmeli
+
         if(counter == uart_chksum_bytes){
         	counter=0;
         	uart_state=uart_done;
@@ -123,6 +126,7 @@ bool checkHeadersComeOnProccess(const uint8_t* d) // sakin kafayla tekrardan bak
 		uart_state=uart_len;
 		fh1=0;
 		memset(&uart_rx_data, 0, sizeof(uart_data_t));
+		failCounter++;
 		return 1;
 	}
 	else{

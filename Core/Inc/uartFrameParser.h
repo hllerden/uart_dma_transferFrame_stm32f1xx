@@ -2,7 +2,7 @@
  * uartFrameParser.h
  *
  *  Created on: Mar 20, 2024
- *      Author: KEMERDEN
+ *      Author: hllokrates
  */
 #include <stdint.h>
 #include <stdbool.h>
