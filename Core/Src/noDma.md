@@ -234,7 +234,7 @@ void assert_failed(uint8_t *file, uint32_t line)
  * noDma.c
  *
  *  Created on: Mar 19, 2024
- *      Author: KEMERDEN
+ *      Author: hllerden
  */
 
 
